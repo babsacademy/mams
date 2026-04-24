@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boutique | Mams Store World</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+  </head>
+  <body class="bg-[#0d0d0d] text-white">
+    <div data-component="navbar"></div>
+
+    <main data-shop-root class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section class="pt-14 pb-10 text-center">
+        <p class="label-caps text-[#c9a96e]">Collection signature</p>
+        <h1 class="font-display text-5xl mt-3">Notre Collection</h1>
+        <p class="text-white/70 mt-4 max-w-2xl mx-auto">Perruques premium pensées pour la femme moderne, élégante et confiante.</p>
+      </section>
+
+      <section class="sticky top-20 z-30 rounded-2xl border border-white/10 bg-[#101010]/95 backdrop-blur px-4 py-5 mb-8">
+        <div class="grid gap-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <button data-filter-type="all" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase bg-[#c9a96e] text-black">Toutes</button>
+            <button data-filter-type="lace front" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Lace Front</button>
+            <button data-filter-type="full lace" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Full Lace</button>
+            <button data-filter-type="headband" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Headband</button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button data-filter-texture="all" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase border-[#c9a96e] text-[#c9a96e]">Toutes textures</button>
+            <button data-filter-texture="lisse" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Lisse</button>
+            <button data-filter-texture="bouclée" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Bouclée</button>
+            <button data-filter-texture="ondulée" class="h-9 px-4 rounded-full border border-white/15 text-xs tracking-[0.12em] uppercase">Ondulée</button>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div data-color-filters class="flex flex-wrap items-center gap-2"></div>
+            <select data-sort-select class="h-10 rounded-full border border-white/20 bg-transparent px-4 text-sm">
+              <option value="new" class="text-black">Nouveautés</option>
+              <option value="price_asc" class="text-black">Prix croissant</option>
+              <option value="price_desc" class="text-black">Prix décroissant</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="flex items-center justify-between mb-5">
+        <p data-products-count class="text-sm text-white/70"></p>
+      </div>
+
+      <section data-products-grid class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-8"></section>
+
+      <div class="pb-16 text-center">
+        <button data-load-more class="h-11 px-7 rounded-full border border-[#c9a96e] text-[#c9a96e] text-xs tracking-[0.14em] uppercase hover:bg-[#c9a96e] hover:text-black transition">
+          Charger plus
+        </button>
+      </div>
+    </main>
+
+    <div data-component="footer"></div>
+    <div data-component="whatsapp-float"></div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/shop.js"></script>
+  </body>
+</html>

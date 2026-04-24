@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | Mams Store World</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+  </head>
+  <body class="bg-[#0d0d0d] text-white">
+    <div data-component="navbar"></div>
+
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex flex-wrap gap-2 mb-8">
+        <span class="h-9 px-4 rounded-full bg-[#c9a96e] text-black text-xs tracking-[0.14em] uppercase inline-flex items-center">1. Infos</span>
+        <span class="h-9 px-4 rounded-full border border-white/20 text-xs tracking-[0.14em] uppercase inline-flex items-center">2. Livraison</span>
+        <span class="h-9 px-4 rounded-full border border-white/20 text-xs tracking-[0.14em] uppercase inline-flex items-center">3. Paiement</span>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
+        <form class="space-y-8">
+          <section class="rounded-2xl border border-white/10 bg-[#111] p-6">
+            <h1 class="font-display text-4xl mb-5">Informations client</h1>
+            <div class="grid gap-4 md:grid-cols-2">
+              <input required type="text" placeholder="Prénom" class="h-12 rounded-xl border border-white/15 bg-transparent px-4" />
+              <input required type="text" placeholder="Nom" class="h-12 rounded-xl border border-white/15 bg-transparent px-4" />
+              <input required type="email" placeholder="Email" class="h-12 rounded-xl border border-white/15 bg-transparent px-4 md:col-span-2" />
+              <input required type="tel" placeholder="Téléphone (WhatsApp)" class="h-12 rounded-xl border border-white/15 bg-transparent px-4 md:col-span-2" />
+            </div>
+            <div class="mt-4 flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 text-sm"><input type="radio" name="account" checked /> Commander en invité</label>
+              <label class="flex items-center gap-2 text-sm"><input type="radio" name="account" /> Créer un compte</label>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-white/10 bg-[#111] p-6">
+            <h2 class="font-display text-3xl mb-4">Zone de livraison</h2>
+            <div class="space-y-3">
+              <label class="block rounded-xl border border-white/15 p-4"><input type="radio" name="shipping" value="2000" checked class="mr-2" /> Dakar (24h - 2 000 FCFA)</label>
+              <label class="block rounded-xl border border-white/15 p-4"><input type="radio" name="shipping" value="3500" class="mr-2" /> Régions (2-3j - 3 500 FCFA)</label>
+              <label class="block rounded-xl border border-white/15 p-4"><input type="radio" name="shipping" value="0" class="mr-2" /> International (à confirmer)</label>
+              <textarea rows="4" placeholder="Adresse complète" class="w-full rounded-xl border border-white/15 bg-transparent p-4"></textarea>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-white/10 bg-[#111] p-6">
+            <h2 class="font-display text-3xl mb-4">Mode de paiement</h2>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <label class="rounded-xl border border-white/15 p-4 cursor-pointer"><input type="radio" name="payment" checked class="mr-2" /> Wave · instantané</label>
+              <label class="rounded-xl border border-white/15 p-4 cursor-pointer"><input type="radio" name="payment" class="mr-2" /> Orange Money · instantané</label>
+              <label class="rounded-xl border border-white/15 p-4 cursor-pointer"><input type="radio" name="payment" class="mr-2" /> Paiement à la livraison</label>
+              <label class="rounded-xl border border-white/15 p-4 cursor-pointer"><input type="radio" name="payment" class="mr-2" /> Carte bancaire</label>
+            </div>
+          </section>
+
+          <button type="submit" class="w-full h-12 rounded-full bg-[#c9a96e] text-black text-xs font-semibold tracking-[0.14em] uppercase">
+            Confirmer la commande
+          </button>
+        </form>
+
+        <aside class="lg:sticky lg:top-24 h-fit rounded-2xl border border-white/10 bg-[#111] p-6">
+          <h2 class="font-display text-3xl">Récapitulatif</h2>
+          <div id="checkout-items" class="mt-5 space-y-3"></div>
+          <div class="mt-4 border-t border-white/10 pt-4 space-y-2 text-sm">
+            <div class="flex justify-between"><span>Sous-total</span><span id="checkout-subtotal">0 FCFA</span></div>
+            <div class="flex justify-between"><span>Livraison</span><span id="checkout-shipping">2 000 FCFA</span></div>
+            <div class="flex justify-between text-lg font-semibold"><span>Total</span><span id="checkout-total">0 FCFA</span></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <div data-component="footer"></div>
+    <div data-component="whatsapp-float"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script>
+      const itemsNode = document.getElementById("checkout-items");
+      const subtotalNode = document.getElementById("checkout-subtotal");
+      const shippingNode = document.getElementById("checkout-shipping");
+      const totalNode = document.getElementById("checkout-total");
+      const shippingInputs = document.querySelectorAll("input[name='shipping']");
+
+      function renderSummary() {
+        const items = window.MamsCart.read();
+        itemsNode.innerHTML = items.map((item) => `
+          <div class="flex items-center justify-between text-sm">
+            <span>${item.name} × ${item.qty}</span>
+            <span>${window.MAMS_UTILS.formatPrice(item.price * item.qty)}</span>
+          </div>
+        `).join("") || '<p class="text-sm text-white/70">Votre panier est vide.</p>';
+
+        const subtotal = window.MamsCart.getTotal();
+        const selectedShipping = document.querySelector("input[name='shipping']:checked");
+        const shipping = Number(selectedShipping ? selectedShipping.value : 2000);
+        subtotalNode.textContent = window.MAMS_UTILS.formatPrice(subtotal);
+        shippingNode.textContent = shipping === 0 ? "À confirmer" : window.MAMS_UTILS.formatPrice(shipping);
+        totalNode.textContent = shipping === 0 ? "À confirmer" : window.MAMS_UTILS.formatPrice(subtotal + shipping);
+      }
+
+      shippingInputs.forEach((input) => input.addEventListener("change", renderSummary));
+      renderSummary();
+    </script>
+  </body>
+</html>

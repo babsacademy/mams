@@ -1,0 +1,16 @@
+{
+    "name": "Mams Store World",
+    "short_name": "Mams",
+    "description": "Hair, beauty, style. Une boutique premium pensée pour une clientèle féminine, élégante et confiante.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0d0d0d",
+    "theme_color": "#c9a96e",
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ]
+}

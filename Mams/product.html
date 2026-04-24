@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produit | Mams Store World</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+  </head>
+  <body class="bg-[#0d0d0d] text-white">
+    <div data-component="navbar"></div>
+
+    <main>
+      <div data-product-root></div>
+
+      <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <h2 class="font-display text-4xl mb-6">Avis clients</h2>
+        <div data-product-reviews></div>
+      </section>
+
+      <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20">
+        <h2 class="font-display text-4xl mb-6">Vous aimerez aussi</h2>
+        <div data-related-products class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"></div>
+      </section>
+    </main>
+
+    <div data-component="footer"></div>
+    <div data-component="whatsapp-float"></div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/product.js"></script>
+  </body>
+</html>

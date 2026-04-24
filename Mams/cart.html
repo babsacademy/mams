@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Panier | Mams Store World</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+  </head>
+  <body class="bg-[#0d0d0d] text-white">
+    <div data-component="navbar"></div>
+
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="font-display text-5xl mb-10">Mon Panier</h1>
+      <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
+        <section>
+          <div id="cart-empty" class="hidden rounded-2xl border border-white/10 bg-[#111] p-10 text-center">
+            <div class="mx-auto h-24 w-24 rounded-full border border-white/15 grid place-items-center text-3xl">🛒</div>
+            <h2 class="font-display text-3xl mt-5">Panier vide</h2>
+            <p class="text-white/70 mt-3">Ajoutez vos perruques favorites pour commencer votre commande.</p>
+            <a href="shop.html" class="mt-6 inline-flex h-11 px-6 rounded-full bg-[#c9a96e] text-black text-xs tracking-[0.14em] uppercase items-center">Retour boutique</a>
+          </div>
+          <div id="cart-table-wrap" class="overflow-x-auto rounded-2xl border border-white/10">
+            <table class="min-w-full text-sm">
+              <thead class="bg-[#151515] text-[#c9a96e] label-caps">
+                <tr>
+                  <th class="px-4 py-4 text-left">Produit</th>
+                  <th class="px-4 py-4 text-left">Prix</th>
+                  <th class="px-4 py-4 text-left">Quantité</th>
+                  <th class="px-4 py-4 text-left">Total</th>
+                  <th class="px-4 py-4 text-left">Supprimer</th>
+                </tr>
+              </thead>
+              <tbody id="cart-rows" class="divide-y divide-white/10 bg-[#101010]"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="lg:sticky lg:top-24 h-fit rounded-2xl border border-white/10 bg-[#111] p-6">
+          <h2 class="font-display text-3xl">Résumé</h2>
+          <div class="mt-5 space-y-3 text-sm">
+            <div class="flex justify-between"><span>Sous-total</span><span id="summary-subtotal">0 FCFA</span></div>
+            <div class="flex justify-between"><span>Livraison</span><span id="summary-shipping">2 000 FCFA</span></div>
+            <div class="border-t border-white/10 pt-3 flex justify-between text-lg font-semibold"><span>Total</span><span id="summary-total">0 FCFA</span></div>
+          </div>
+          <div class="mt-5 flex gap-2">
+            <input type="text" placeholder="Code promo" class="flex-1 h-11 rounded-full bg-transparent border border-white/20 px-4 text-sm" />
+            <button class="h-11 px-4 rounded-full border border-[#c9a96e] text-[#c9a96e] text-xs tracking-[0.12em] uppercase">Appliquer</button>
+          </div>
+          <a href="checkout.html" class="mt-5 w-full h-12 rounded-full bg-[#c9a96e] text-black text-xs font-semibold tracking-[0.14em] uppercase grid place-items-center">Passer la commande</a>
+        </aside>
+      </div>
+    </main>
+
+    <div data-component="footer"></div>
+    <div data-component="whatsapp-float"></div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script>
+      const rowsNode = document.getElementById("cart-rows");
+      const emptyNode = document.getElementById("cart-empty");
+      const tableWrap = document.getElementById("cart-table-wrap");
+      const subtotalNode = document.getElementById("summary-subtotal");
+      const shippingNode = document.getElementById("summary-shipping");
+      const totalNode = document.getElementById("summary-total");
+
+      function renderCart() {
+        const items = window.MamsCart.read();
+        if (!items.length) {
+          emptyNode.classList.remove("hidden");
+          tableWrap.classList.add("hidden");
+          subtotalNode.textContent = window.MAMS_UTILS.formatPrice(0);
+          shippingNode.textContent = window.MAMS_UTILS.formatPrice(0);
+          totalNode.textContent = window.MAMS_UTILS.formatPrice(0);
+          return;
+        }
+
+        emptyNode.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+        rowsNode.innerHTML = items.map((item, index) => `
+          <tr>
+            <td class="px-4 py-4">
+              <div class="flex items-center gap-3 min-w-[260px]">
+                <div class="h-16 w-16 rounded-xl placeholder-media shrink-0"></div>
+                <div>
+                  <p class="font-semibold">${item.name}</p>
+                  <p class="text-xs text-white/60">${item.variation.length} · ${item.variation.color} · ${item.variation.texture} · ${item.variation.laceType}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-4">${window.MAMS_UTILS.formatPrice(item.price)}</td>
+            <td class="px-4 py-4">
+              <div class="flex items-center gap-2">
+                <button data-qty-minus="${index}" class="h-8 w-8 rounded-full border border-white/20">−</button>
+                <span class="min-w-7 text-center">${item.qty}</span>
+                <button data-qty-plus="${index}" class="h-8 w-8 rounded-full border border-white/20">+</button>
+              </div>
+            </td>
+            <td class="px-4 py-4">${window.MAMS_UTILS.formatPrice(item.price * item.qty)}</td>
+            <td class="px-4 py-4"><button data-remove="${index}" class="text-red-300 hover:text-red-200">Supprimer</button></td>
+          </tr>
+        `).join("");
+
+        const subtotal = window.MamsCart.getTotal();
+        const shipping = subtotal > 0 ? 2000 : 0;
+        subtotalNode.textContent = window.MAMS_UTILS.formatPrice(subtotal);
+        shippingNode.textContent = window.MAMS_UTILS.formatPrice(shipping);
+        totalNode.textContent = window.MAMS_UTILS.formatPrice(subtotal + shipping);
+        bindActions();
+      }
+
+      function bindActions() {
+        document.querySelectorAll("[data-remove]").forEach((button) => {
+          button.addEventListener("click", () => {
+            window.MamsCart.removeFromCart(Number(button.dataset.remove));
+            renderCart();
+          });
+        });
+        document.querySelectorAll("[data-qty-minus]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const index = Number(button.dataset.qtyMinus);
+            const item = window.MamsCart.read()[index];
+            if (!item) return;
+            window.MamsCart.updateQty(index, item.qty - 1);
+            renderCart();
+          });
+        });
+        document.querySelectorAll("[data-qty-plus]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const index = Number(button.dataset.qtyPlus);
+            const item = window.MamsCart.read()[index];
+            if (!item) return;
+            window.MamsCart.updateQty(index, item.qty + 1);
+            renderCart();
+          });
+        });
+      }
+
+      renderCart();
+    </script>
+  </body>
+</html>
