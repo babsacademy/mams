@@ -2,6 +2,8 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -18,9 +20,42 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
 
     public string $successMessage = '';
 
+    public string $newName = '';
+    public string $newEmail = '';
+    public string $newPassword = '';
+    public bool $newIsAdmin = false;
+
     public function updatedSearch(): void
     {
         $this->resetPage();
+    }
+
+    public function createUser(): void
+    {
+        Gate::authorize('admin-action');
+
+        $this->validate([
+            'newName'     => ['required', 'string', 'max:255'],
+            'newEmail'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'newPassword' => ['required', Password::min(8)],
+        ], [
+            'newName.required'     => 'Le nom est obligatoire.',
+            'newEmail.required'    => 'L\'email est obligatoire.',
+            'newEmail.unique'      => 'Cet email est déjà utilisé.',
+            'newPassword.required' => 'Le mot de passe est obligatoire.',
+        ]);
+
+        User::create([
+            'name'              => $this->newName,
+            'email'             => $this->newEmail,
+            'password'          => Hash::make($this->newPassword),
+            'is_admin'          => $this->newIsAdmin,
+            'email_verified_at' => now(),
+        ]);
+
+        $this->reset(['newName', 'newEmail', 'newPassword', 'newIsAdmin']);
+        $this->successMessage = "Utilisateur créé avec succès.";
+        $this->dispatch('close-modal', name: 'create-user');
     }
 
     public function toggleAdmin(int $userId): void
@@ -30,7 +65,7 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
         $user = User::findOrFail($userId);
 
         if ($user->id === auth()->id()) {
-            return; // Cannot demote yourself
+            return;
         }
 
         $user->update(['is_admin' => ! $user->is_admin]);
@@ -46,7 +81,7 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
         $user = User::findOrFail($userId);
 
         if ($user->id === auth()->id()) {
-            return; // Cannot delete yourself
+            return;
         }
 
         $user->delete();
@@ -72,10 +107,12 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
             <h1 class="text-3xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">Utilisateurs</h1>
             <p class="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-widest font-bold mt-1">Gérez les accès et les permissions des membres du staff et des clients.</p>
         </div>
-        <flux:button href="#" variant="primary" class="!bg-brand-primary border-none font-black uppercase tracking-widest text-[10px] py-3 shadow-lg shadow-brand-primary/20">
-            <flux:icon.plus class="size-4 mr-2" />
-            Ajouter un membre
-        </flux:button>
+        <flux:modal.trigger name="create-user">
+            <flux:button variant="primary" class="!bg-brand-primary border-none font-black uppercase tracking-widest text-[10px] py-3 shadow-lg shadow-brand-primary/20">
+                <flux:icon.plus class="size-4 mr-2" />
+                Ajouter un membre
+            </flux:button>
+        </flux:modal.trigger>
     </div>
 
     @if($successMessage)
@@ -202,4 +239,47 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
         @endif
     </div>
 </div>
+
+<flux:modal name="create-user" class="w-full max-w-lg">
+    <div class="p-8 space-y-6">
+        <div>
+            <h2 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">Ajouter un membre</h2>
+            <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Créer un nouveau compte utilisateur.</p>
+        </div>
+
+        <form wire:submit="createUser" class="space-y-5">
+            <flux:field>
+                <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Nom complet</flux:label>
+                <flux:input wire:model="newName" placeholder="Ex: Awa Ndiaye" />
+                <flux:error name="newName" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Adresse email</flux:label>
+                <flux:input wire:model="newEmail" type="email" placeholder="exemple@email.com" />
+                <flux:error name="newEmail" />
+            </flux:field>
+
+            <flux:field>
+                <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Mot de passe</flux:label>
+                <flux:input wire:model="newPassword" type="password" placeholder="Minimum 8 caractères" />
+                <flux:error name="newPassword" />
+            </flux:field>
+
+            <flux:field variant="inline">
+                <flux:checkbox wire:model="newIsAdmin" />
+                <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Accès administrateur</flux:label>
+            </flux:field>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <flux:modal.close>
+                    <flux:button variant="ghost" class="font-black uppercase tracking-widest text-[10px]">Annuler</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="primary" class="!bg-brand-primary border-none font-black uppercase tracking-widest text-[10px]">
+                    Créer le compte
+                </flux:button>
+            </div>
+        </form>
+    </div>
+</flux:modal>
 
