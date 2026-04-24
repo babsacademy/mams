@@ -107,7 +107,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                         <th class="text-left px-6 py-5 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.15em] whitespace-nowrap">Tarif</th>
                         <th class="text-center px-6 py-5 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.15em] hidden sm:table-cell whitespace-nowrap">Stock</th>
                         <th class="text-center px-6 py-5 text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.15em] whitespace-nowrap">Visibilité</th>
-                        <th class="text-right px-6 py-5"></th>
+                        <th class="text-right px-6 py-5 sticky right-0 bg-white dark:bg-zinc-900"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-50 dark:divide-zinc-800/30">
@@ -192,7 +192,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                                     <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-right whitespace-nowrap">
+                            <td class="px-6 py-5 text-right whitespace-nowrap sticky right-0 bg-white dark:bg-zinc-900 group-hover:bg-zinc-50/50 dark:group-hover:bg-zinc-800/30 transition-colors duration-300">
                                 <div class="flex items-center justify-end gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all sm:transform sm:translate-x-2 sm:group-hover:translate-x-0">
                                     <flux:button href="{{ route('admin.products.edit', $product) }}" size="sm" variant="ghost" icon="pencil-square" inset class="text-zinc-400 hover:text-brand-primary" />
                                     <flux:button wire:click="confirmDelete({{ $product->id }})" size="sm" variant="ghost" icon="trash" inset class="text-zinc-400 hover:text-rose-500" />
