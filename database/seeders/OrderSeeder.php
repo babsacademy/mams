@@ -118,7 +118,7 @@ class OrderSeeder extends Seeder
                 'total' => $subtotal + $deliveryFee,
                 'status' => $sampleOrder['status'],
                 'payment_method' => $sampleOrder['payment_method'],
-                'placed_at' => now()->subDays(fake()->numberBetween(1, 20)),
+                'placed_at' => now()->subDays(rand(1, 20)),
             ]);
 
             foreach ($resolvedItems as $resolvedItem) {
