@@ -96,8 +96,68 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
         </flux:select>
     </div>
 
-    {{-- Table --}}
-    <div class="bg-white dark:bg-zinc-900/50 backdrop-blur-sm rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+    {{-- Vue cartes mobile --}}
+    <div class="sm:hidden space-y-3 mb-6">
+        @forelse($this->products as $product)
+            @php
+                $productImageUrl = $product->image_url
+                    ? (Str::startsWith($product->image_url, ['http://', 'https://', 'data:', '/'])
+                        ? $product->image_url
+                        : asset('storage/'.ltrim($product->image_url, '/')))
+                    : null;
+                $stockColor = $product->stock === 0 ? 'rose' : ($product->stock <= 5 ? 'amber' : 'emerald');
+                $stockBg = ['rose' => 'bg-rose-500/10 text-rose-400 border-rose-500/20', 'amber' => 'bg-amber-500/10 text-amber-400 border-amber-500/20', 'emerald' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'][$stockColor];
+            @endphp
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
+                <div class="flex items-center gap-4 p-4">
+                    <div class="relative size-16 rounded-xl overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0">
+                        @if($productImageUrl)
+                            <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover">
+                        @else
+                            <div class="size-full flex items-center justify-center">
+                                <flux:icon.photo class="size-5 text-zinc-600" />
+                            </div>
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-black text-white uppercase tracking-tight truncate">{{ $product->name }}</p>
+                        <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                        <p class="font-black text-brand-primary text-lg mt-1">{{ number_format($product->price, 0, ',', ' ') }} <span class="text-[10px] text-zinc-500 font-bold">FCFA</span></p>
+                    </div>
+                    <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
+                </div>
+                <div class="flex items-center justify-between px-4 py-3 border-t border-zinc-800">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $stockBg }} text-[9px] font-black uppercase tracking-widest rounded-full border">
+                        <span class="size-1.5 rounded-full bg-current"></span>
+                        {{ $product->stock }} Unités
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('admin.products.edit', $product) }}" class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors">
+                            <flux:icon.pencil-square class="size-4" />
+                        </a>
+                        <button wire:click="confirmDelete({{ $product->id }})" class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                            <flux:icon.trash class="size-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-20 text-zinc-500">
+                <flux:icon.archive-box class="size-10 mx-auto mb-4 text-zinc-700" />
+                <p class="font-black uppercase tracking-widest text-sm">Aucun produit</p>
+            </div>
+        @endforelse
+    </div>
+
+    {{-- Pagination mobile --}}
+    @if($this->products->hasPages())
+        <div class="sm:hidden px-2 py-4">
+            {{ $this->products->links() }}
+        </div>
+    @endif
+
+    {{-- Table desktop --}}
+    <div class="hidden sm:block bg-white dark:bg-zinc-900/50 backdrop-blur-sm rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
