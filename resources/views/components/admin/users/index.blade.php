@@ -101,7 +101,7 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
     }
 }; ?>
 
-<div class="space-y-10">
+<div class="space-y-10" x-data>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <h1 class="text-3xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">Utilisateurs</h1>
@@ -238,9 +238,8 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
             </div>
         @endif
     </div>
-</div>
 
-<flux:modal name="create-user" class="w-full max-w-lg">
+    <flux:modal name="create-user" class="w-full max-w-lg">
     <div class="p-8 space-y-6">
         <div>
             <h2 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">Ajouter un membre</h2>
@@ -281,5 +280,6 @@ new #[Title('Utilisateurs')] #[Layout('layouts.app')] class extends Component
             </div>
         </form>
     </div>
-</flux:modal>
+    </flux:modal>
+</div>
 
