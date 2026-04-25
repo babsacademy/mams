@@ -111,7 +111,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                 @endphp
                 <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
                     {{-- Image --}}
-                    <a href="{{ route('admin.products.edit', $product) }}" class="block relative h-44 bg-zinc-800 overflow-hidden">
+                    <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block relative h-44 bg-zinc-800 overflow-hidden">
                         @if($productImageUrl)
                             <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                         @else
@@ -128,7 +128,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                                 @if($product->badge)
                                     <span class="inline-block mb-1 px-2 py-0.5 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded">{{ $product->badge }}</span>
                                 @endif
-                                <a href="{{ route('admin.products.edit', $product) }}" class="block font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors truncate">{{ $product->name }}</a>
+                                <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors truncate">{{ $product->name }}</a>
                                 <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
                             </div>
                             <div class="shrink-0 pt-0.5">
