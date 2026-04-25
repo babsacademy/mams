@@ -109,57 +109,42 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                     $stockColor = $product->stock === 0 ? 'rose' : ($product->stock <= 5 ? 'amber' : 'emerald');
                     $stockBg = ['rose' => 'bg-rose-500/10 text-rose-400 border-rose-500/20', 'amber' => 'bg-amber-500/10 text-amber-400 border-amber-500/20', 'emerald' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'][$stockColor];
                 @endphp
-                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
-                    {{-- Image --}}
-                    <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block relative h-44 bg-zinc-800 overflow-hidden">
-                        @if($productImageUrl)
-                            <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center">
-                                <flux:icon.photo class="size-10 text-zinc-600" />
-                            </div>
-                        @endif
-                    </a>
-
-                    {{-- Infos --}}
-                    <div class="p-4 flex-1 flex flex-col gap-3">
-                        <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0">
-                                @if($product->badge)
-                                    <span class="inline-block mb-1 px-2 py-0.5 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded">{{ $product->badge }}</span>
-                                @endif
-                                <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors truncate">{{ $product->name }}</a>
-                                <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
-                            </div>
-                            <div class="shrink-0 pt-0.5">
-                                <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <p class="font-black text-brand-primary text-xl">
-                                {{ number_format($product->price, 0, ',', ' ') }}
-                                <span class="text-[10px] text-zinc-500 font-bold">FCFA</span>
-                            </p>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 {{ $stockBg }} text-[9px] font-black uppercase tracking-widest rounded-full border">
-                                <span class="size-1.5 rounded-full bg-current"></span>
-                                {{ $product->stock }}
-                            </span>
-                        </div>
-                    </div>
-
-                    {{-- Actions --}}
-                    <div class="grid grid-cols-2 border-t border-zinc-800 divide-x divide-zinc-800">
-                        <a href="{{ route('admin.products.edit', $product) }}"
-                           class="flex items-center justify-center gap-2 py-3 text-zinc-400 hover:text-brand-primary hover:bg-brand-primary/5 transition-colors font-black uppercase tracking-widest text-[10px]">
-                            <flux:icon.pencil-square class="size-4" />
-                            Modifier
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
+                    {{-- Ligne principale --}}
+                    <div class="flex items-center gap-4 p-4">
+                        <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="relative size-16 rounded-xl overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0 block">
+                            @if($productImageUrl)
+                                <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover">
+                            @else
+                                <div class="size-full flex items-center justify-center">
+                                    <flux:icon.photo class="size-5 text-zinc-600" />
+                                </div>
+                            @endif
                         </a>
-                        <button wire:click="confirmDelete({{ $product->id }})"
-                                class="flex items-center justify-center gap-2 py-3 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 transition-colors font-black uppercase tracking-widest text-[10px]">
-                            <flux:icon.trash class="size-4" />
-                            Supprimer
-                        </button>
+                        <div class="flex-1 min-w-0">
+                            @if($product->badge)
+                                <span class="inline-block mb-0.5 px-2 py-0.5 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded">{{ $product->badge }}</span>
+                            @endif
+                            <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block font-black text-white hover:text-brand-primary uppercase tracking-tight truncate transition-colors">{{ $product->name }}</a>
+                            <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                            <p class="font-black text-brand-primary mt-1">{{ number_format($product->price, 0, ',', ' ') }} <span class="text-[10px] text-zinc-500 font-bold">FCFA</span></p>
+                        </div>
+                        <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
+                    </div>
+                    {{-- Pied de carte --}}
+                    <div class="flex items-center justify-between px-4 py-3 border-t border-zinc-800">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $stockBg }} text-[9px] font-black uppercase tracking-widest rounded-full border">
+                            <span class="size-1.5 rounded-full bg-current"></span>
+                            {{ $product->stock }} Unités
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors">
+                                <flux:icon.pencil-square class="size-4" />
+                            </a>
+                            <button wire:click="confirmDelete({{ $product->id }})" class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                <flux:icon.trash class="size-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             @empty
