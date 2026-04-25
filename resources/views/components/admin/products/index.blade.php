@@ -111,31 +111,29 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                 @endphp
                 <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
                     {{-- Image --}}
-                    <a href="{{ route('admin.products.edit', $product) }}" class="relative w-full aspect-4/3 bg-zinc-800 block">
+                    <a href="{{ route('admin.products.edit', $product) }}" class="block relative h-44 bg-zinc-800 overflow-hidden">
                         @if($productImageUrl)
-                            <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover">
+                            <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
                         @else
-                            <div class="size-full flex items-center justify-center">
+                            <div class="w-full h-full flex items-center justify-center">
                                 <flux:icon.photo class="size-10 text-zinc-600" />
                             </div>
                         @endif
-                        {{-- Badge actif/inactif --}}
-                        <div class="absolute top-3 left-3">
-                            @if($product->badge)
-                                <span class="px-2 py-1 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded-lg">{{ $product->badge }}</span>
-                            @endif
-                        </div>
-                        {{-- Toggle visibilité --}}
-                        <div class="absolute top-3 right-3 bg-zinc-900/80 backdrop-blur-sm rounded-xl p-1.5" onclick="event.preventDefault()">
-                            <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
-                        </div>
                     </a>
 
                     {{-- Infos --}}
                     <div class="p-4 flex-1 flex flex-col gap-3">
-                        <div>
-                            <a href="{{ route('admin.products.edit', $product) }}" class="font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors">{{ $product->name }}</a>
-                            <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-1">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                @if($product->badge)
+                                    <span class="inline-block mb-1 px-2 py-0.5 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded">{{ $product->badge }}</span>
+                                @endif
+                                <a href="{{ route('admin.products.edit', $product) }}" class="block font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors truncate">{{ $product->name }}</a>
+                                <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                            </div>
+                            <div class="shrink-0 pt-0.5">
+                                <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
+                            </div>
                         </div>
 
                         <div class="flex items-center justify-between">
