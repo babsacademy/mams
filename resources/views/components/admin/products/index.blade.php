@@ -176,7 +176,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                         <tr class="group hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-all duration-300">
                             <td class="px-6 py-5 whitespace-nowrap max-w-xs">
                                 <div class="flex items-center gap-4">
-                                    <div class="relative size-16 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 shrink-0">
+                                    <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="relative size-16 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 shrink-0 block">
                                         @if($product->image_url)
                                             @php
                                                 $productImageUrl = Str::startsWith($product->image_url, ['http://', 'https://', 'data:', '/'])
@@ -191,9 +191,9 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                                                <flux:icon.photo class="size-5 text-zinc-300 opacity-50" />
                                             </div>
                                         @endif
-                                    </div>
+                                    </a>
                                     <div class="min-w-0">
-                                        <p class="font-black text-zinc-900 dark:text-zinc-100 leading-tight text-base group-hover:text-brand-primary transition-colors truncate">{{ $product->name }}</p>
+                                        <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block font-black text-zinc-900 dark:text-zinc-100 leading-tight text-base group-hover:text-brand-primary transition-colors truncate">{{ $product->name }}</a>
                                         <div class="flex items-center gap-2 mt-1.5">
                                             <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</span>
                                             @if($product->badge)
