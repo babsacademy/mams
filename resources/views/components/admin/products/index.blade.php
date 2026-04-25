@@ -122,9 +122,6 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                             @endif
                         </a>
                         <div class="flex-1 min-w-0">
-                            @if($product->badge)
-                                <span class="inline-block mb-0.5 px-2 py-0.5 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded">{{ $product->badge }}</span>
-                            @endif
                             <a href="{{ route('admin.products.edit', $product) }}" wire:navigate class="block font-black text-white hover:text-brand-primary uppercase tracking-tight truncate transition-colors">{{ $product->name }}</a>
                             <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
                             <p class="font-black text-brand-primary mt-1">{{ number_format($product->price, 0, ',', ' ') }} <span class="text-[10px] text-zinc-500 font-bold">FCFA</span></p>
