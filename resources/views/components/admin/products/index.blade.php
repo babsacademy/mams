@@ -96,68 +96,89 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
         </flux:select>
     </div>
 
-    {{-- Vue cartes mobile --}}
-    <div class="sm:hidden space-y-3 mb-6">
-        @forelse($this->products as $product)
-            @php
-                $productImageUrl = $product->image_url
-                    ? (Str::startsWith($product->image_url, ['http://', 'https://', 'data:', '/'])
-                        ? $product->image_url
-                        : asset('storage/'.ltrim($product->image_url, '/')))
-                    : null;
-                $stockColor = $product->stock === 0 ? 'rose' : ($product->stock <= 5 ? 'amber' : 'emerald');
-                $stockBg = ['rose' => 'bg-rose-500/10 text-rose-400 border-rose-500/20', 'amber' => 'bg-amber-500/10 text-amber-400 border-amber-500/20', 'emerald' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'][$stockColor];
-            @endphp
-            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
-                <div class="flex items-center gap-4 p-4">
-                    <div class="relative size-16 rounded-xl overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0">
+    {{-- Vue cartes mobile + tablette --}}
+    <div class="lg:hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            @forelse($this->products as $product)
+                @php
+                    $productImageUrl = $product->image_url
+                        ? (Str::startsWith($product->image_url, ['http://', 'https://', 'data:', '/'])
+                            ? $product->image_url
+                            : asset('storage/'.ltrim($product->image_url, '/')))
+                        : null;
+                    $stockColor = $product->stock === 0 ? 'rose' : ($product->stock <= 5 ? 'amber' : 'emerald');
+                    $stockBg = ['rose' => 'bg-rose-500/10 text-rose-400 border-rose-500/20', 'amber' => 'bg-amber-500/10 text-amber-400 border-amber-500/20', 'emerald' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'][$stockColor];
+                @endphp
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
+                    {{-- Image --}}
+                    <div class="relative w-full aspect-4/3 bg-zinc-800">
                         @if($productImageUrl)
                             <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover">
                         @else
                             <div class="size-full flex items-center justify-center">
-                                <flux:icon.photo class="size-5 text-zinc-600" />
+                                <flux:icon.photo class="size-10 text-zinc-600" />
                             </div>
                         @endif
+                        {{-- Badge actif/inactif --}}
+                        <div class="absolute top-3 left-3">
+                            @if($product->badge)
+                                <span class="px-2 py-1 bg-brand-primary text-zinc-900 text-[9px] font-black uppercase tracking-widest rounded-lg">{{ $product->badge }}</span>
+                            @endif
+                        </div>
+                        {{-- Toggle visibilité --}}
+                        <div class="absolute top-3 right-3 bg-zinc-900/80 backdrop-blur-sm rounded-xl p-1.5">
+                            <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-black text-white uppercase tracking-tight truncate">{{ $product->name }}</p>
-                        <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
-                        <p class="font-black text-brand-primary text-lg mt-1">{{ number_format($product->price, 0, ',', ' ') }} <span class="text-[10px] text-zinc-500 font-bold">FCFA</span></p>
+
+                    {{-- Infos --}}
+                    <div class="p-4 flex-1 flex flex-col gap-3">
+                        <div>
+                            <p class="font-black text-white uppercase tracking-tight leading-tight">{{ $product->name }}</p>
+                            <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-1">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <p class="font-black text-brand-primary text-xl">
+                                {{ number_format($product->price, 0, ',', ' ') }}
+                                <span class="text-[10px] text-zinc-500 font-bold">FCFA</span>
+                            </p>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 {{ $stockBg }} text-[9px] font-black uppercase tracking-widest rounded-full border">
+                                <span class="size-1.5 rounded-full bg-current"></span>
+                                {{ $product->stock }}
+                            </span>
+                        </div>
                     </div>
-                    <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
-                </div>
-                <div class="flex items-center justify-between px-4 py-3 border-t border-zinc-800">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $stockBg }} text-[9px] font-black uppercase tracking-widest rounded-full border">
-                        <span class="size-1.5 rounded-full bg-current"></span>
-                        {{ $product->stock }} Unités
-                    </span>
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('admin.products.edit', $product) }}" class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors">
+
+                    {{-- Actions --}}
+                    <div class="grid grid-cols-2 border-t border-zinc-800 divide-x divide-zinc-800">
+                        <a href="{{ route('admin.products.edit', $product) }}"
+                           class="flex items-center justify-center gap-2 py-3 text-zinc-400 hover:text-brand-primary hover:bg-brand-primary/5 transition-colors font-black uppercase tracking-widest text-[10px]">
                             <flux:icon.pencil-square class="size-4" />
+                            Modifier
                         </a>
-                        <button wire:click="confirmDelete({{ $product->id }})" class="size-9 flex items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                        <button wire:click="confirmDelete({{ $product->id }})"
+                                class="flex items-center justify-center gap-2 py-3 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/5 transition-colors font-black uppercase tracking-widest text-[10px]">
                             <flux:icon.trash class="size-4" />
+                            Supprimer
                         </button>
                     </div>
                 </div>
-            </div>
-        @empty
-            <div class="text-center py-20 text-zinc-500">
-                <flux:icon.archive-box class="size-10 mx-auto mb-4 text-zinc-700" />
-                <p class="font-black uppercase tracking-widest text-sm">Aucun produit</p>
-            </div>
-        @endforelse
+            @empty
+                <div class="col-span-2 text-center py-20 text-zinc-500">
+                    <flux:icon.archive-box class="size-10 mx-auto mb-4 text-zinc-700" />
+                    <p class="font-black uppercase tracking-widest text-sm">Aucun produit</p>
+                </div>
+            @endforelse
+        </div>
+
+        @if($this->products->hasPages())
+            <div class="py-4">{{ $this->products->links() }}</div>
+        @endif
     </div>
 
-    {{-- Pagination mobile --}}
-    @if($this->products->hasPages())
-        <div class="sm:hidden px-2 py-4">
-            {{ $this->products->links() }}
-        </div>
-    @endif
-
-    {{-- Table desktop --}}
-    <div class="hidden sm:block bg-white dark:bg-zinc-900/50 backdrop-blur-sm rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+    {{-- Table desktop (lg+) --}}
+    <div class="hidden lg:block bg-white dark:bg-zinc-900/50 backdrop-blur-sm rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
