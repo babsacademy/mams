@@ -111,7 +111,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                 @endphp
                 <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col">
                     {{-- Image --}}
-                    <div class="relative w-full aspect-4/3 bg-zinc-800">
+                    <a href="{{ route('admin.products.edit', $product) }}" class="relative w-full aspect-4/3 bg-zinc-800 block">
                         @if($productImageUrl)
                             <img src="{{ $productImageUrl }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover">
                         @else
@@ -126,15 +126,15 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                             @endif
                         </div>
                         {{-- Toggle visibilité --}}
-                        <div class="absolute top-3 right-3 bg-zinc-900/80 backdrop-blur-sm rounded-xl p-1.5">
+                        <div class="absolute top-3 right-3 bg-zinc-900/80 backdrop-blur-sm rounded-xl p-1.5" onclick="event.preventDefault()">
                             <flux:switch wire:click="toggleActive({{ $product->id }})" :checked="$product->is_active" size="sm" color="pink" />
                         </div>
-                    </div>
+                    </a>
 
                     {{-- Infos --}}
                     <div class="p-4 flex-1 flex flex-col gap-3">
                         <div>
-                            <p class="font-black text-white uppercase tracking-tight leading-tight">{{ $product->name }}</p>
+                            <a href="{{ route('admin.products.edit', $product) }}" class="font-black text-white hover:text-brand-primary uppercase tracking-tight leading-tight transition-colors">{{ $product->name }}</a>
                             <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-1">ID-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</p>
                         </div>
 
