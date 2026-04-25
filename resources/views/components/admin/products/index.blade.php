@@ -253,7 +253,7 @@ new #[Title('Produits')] #[Layout('layouts.app')] class extends Component
                                 </div>
                             </td>
                             <td class="px-6 py-5 text-right whitespace-nowrap sticky right-0 bg-white dark:bg-zinc-900 group-hover:bg-zinc-50/50 dark:group-hover:bg-zinc-800/30 transition-colors duration-300">
-                                <div class="flex items-center justify-end gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all sm:transform sm:translate-x-2 sm:group-hover:translate-x-0">
+                                <div class="flex items-center justify-end gap-1">
                                     <flux:button href="{{ route('admin.products.edit', $product) }}" size="sm" variant="ghost" icon="pencil-square" inset class="text-zinc-400 hover:text-brand-primary" />
                                     <flux:button wire:click="confirmDelete({{ $product->id }})" size="sm" variant="ghost" icon="trash" inset class="text-zinc-400 hover:text-rose-500" />
                                 </div>
