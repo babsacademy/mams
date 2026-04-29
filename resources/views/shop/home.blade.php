@@ -93,17 +93,17 @@
     <section class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <div class="grid gap-6 lg:grid-cols-2">
             <div class="h-[420px] overflow-hidden rounded-2xl border border-white/10 lg:h-[520px]">
-                <img src="{{ asset('mams-template/assets/images/prod.png') }}" alt="Editorial beauty" class="h-full w-full object-cover object-center">
+                <img src="{{ $editorialImageLeft }}" alt="{{ $editorialTitle }}" class="h-full w-full object-cover object-center">
             </div>
             <div class="grid gap-6">
                 <div class="h-[250px] overflow-hidden rounded-2xl border border-white/10">
-                    <img src="{{ asset('mams-template/assets/images/pr.png') }}" alt="Lifestyle beauty" class="h-full w-full object-cover object-center">
+                    <img src="{{ $editorialImageRight }}" alt="{{ $editorialTitle }}" class="h-full w-full object-cover object-center">
                 </div>
                 <div class="flex flex-col justify-center rounded-2xl border border-[#c9a96e]/30 bg-[#151515] p-8">
-                    <p class="label-caps text-[#c9a96e]">Collections</p>
-                    <h3 class="mt-3 font-display text-4xl">Un storefront adapte a un autre client</h3>
-                    <p class="mt-4 text-white/70">Le front public reprend maintenant le langage visuel du template Mams tout en gardant votre moteur Laravel pour les produits, commandes et contenus.</p>
-                    <a href="{{ route('catalogue') }}" class="mt-5 text-sm uppercase tracking-[0.16em] text-[#d8d1c4] transition hover:text-white">Explorer la boutique</a>
+                    <p class="label-caps text-[#c9a96e]">{{ $editorialBadge }}</p>
+                    <h3 class="mt-3 font-display text-4xl">{{ $editorialTitle }}</h3>
+                    <p class="mt-4 text-white/70">{{ $editorialText }}</p>
+                    <a href="{{ route('catalogue') }}" class="mt-5 text-sm uppercase tracking-[0.16em] text-[#d8d1c4] transition hover:text-white">{{ $editorialLinkText }}</a>
                 </div>
             </div>
         </div>

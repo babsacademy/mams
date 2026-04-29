@@ -25,6 +25,14 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
     public int $heroImagePositionX = 50;
     public int $heroImagePositionY = 0;
 
+    // Section Éditoriale (deux images + texte)
+    public string $editorialImageLeft  = '';
+    public string $editorialImageRight = '';
+    public string $editorialBadge      = '';
+    public string $editorialTitle      = '';
+    public string $editorialText       = '';
+    public string $editorialLinkText   = '';
+
     // Section Savoir-faire
     public string $craftImage    = '';
     public string $craftTitle    = '';
@@ -36,7 +44,7 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
 
     // Médiathèque
     public bool $showMediaPicker   = false;
-    public string $mediaPickerTarget = 'hero'; // 'hero' ou 'craft'
+    public string $mediaPickerTarget = 'hero'; // 'hero', 'editorial_left', 'editorial_right'
     public string $mediaSearch     = '';
     public bool $isUploadingMedia  = false;
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile[] */
@@ -45,6 +53,13 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
     public function mount(): void
     {
         $this->loadHeroSettings();
+
+        $this->editorialImageLeft  = Setting::get('editorial_image_left', '');
+        $this->editorialImageRight = Setting::get('editorial_image_right', '');
+        $this->editorialBadge      = Setting::get('editorial_badge', 'Collections');
+        $this->editorialTitle      = Setting::get('editorial_title', 'Nos produits, votre beauté');
+        $this->editorialText       = Setting::get('editorial_text', 'Découvrez notre sélection premium de cheveux, perruques et accessoires beauté pensée pour sublimer chaque style.');
+        $this->editorialLinkText   = Setting::get('editorial_link_text', 'Explorer la boutique');
 
         $this->craftImage  = Setting::get('craft_image', '');
         $this->craftTitle  = Setting::get('craft_title', "L'Art du Cuir Dakarois");
@@ -100,13 +115,19 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
     {
         $media = Media::findOrFail($mediaId);
 
-        if ($this->mediaPickerTarget === 'craft') {
-            $this->craftImage = $media->path;
-            Setting::set('craft_image', $this->craftImage, 'vitrine');
-        } else {
-            $this->heroImageUrl = $media->path;
-            Setting::set('hero_image_url', $this->heroImageUrl, 'hero');
-        }
+        match ($this->mediaPickerTarget) {
+            'craft'            => $this->craftImage = $media->path,
+            'editorial_left'   => $this->editorialImageLeft = $media->path,
+            'editorial_right'  => $this->editorialImageRight = $media->path,
+            default            => $this->heroImageUrl = $media->path,
+        };
+
+        match ($this->mediaPickerTarget) {
+            'craft'            => Setting::set('craft_image', $this->craftImage, 'vitrine'),
+            'editorial_left'   => Setting::set('editorial_image_left', $this->editorialImageLeft, 'vitrine'),
+            'editorial_right'  => Setting::set('editorial_image_right', $this->editorialImageRight, 'vitrine'),
+            default            => Setting::set('hero_image_url', $this->heroImageUrl, 'hero'),
+        };
 
         $this->showMediaPicker = false;
         $this->mediaSearch     = '';
@@ -114,13 +135,31 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
 
     public function clearImage(string $target = 'hero'): void
     {
-        if ($target === 'craft') {
-            $this->craftImage = '';
-            Setting::set('craft_image', $this->craftImage, 'vitrine');
-        } else {
-            $this->heroImageUrl = '';
-            Setting::set('hero_image_url', $this->heroImageUrl, 'hero');
-        }
+        match ($target) {
+            'craft'           => [$this->craftImage = '', Setting::set('craft_image', '', 'vitrine')],
+            'editorial_left'  => [$this->editorialImageLeft = '', Setting::set('editorial_image_left', '', 'vitrine')],
+            'editorial_right' => [$this->editorialImageRight = '', Setting::set('editorial_image_right', '', 'vitrine')],
+            default           => [$this->heroImageUrl = '', Setting::set('hero_image_url', '', 'hero')],
+        };
+    }
+
+    public function saveEditorial(): void
+    {
+        $this->validate([
+            'editorialBadge'    => ['nullable', 'string', 'max:60'],
+            'editorialTitle'    => ['nullable', 'string', 'max:120'],
+            'editorialText'     => ['nullable', 'string', 'max:500'],
+            'editorialLinkText' => ['nullable', 'string', 'max:60'],
+        ]);
+
+        Setting::set('editorial_image_left', $this->editorialImageLeft, 'vitrine');
+        Setting::set('editorial_image_right', $this->editorialImageRight, 'vitrine');
+        Setting::set('editorial_badge', $this->editorialBadge, 'vitrine');
+        Setting::set('editorial_title', $this->editorialTitle, 'vitrine');
+        Setting::set('editorial_text', $this->editorialText, 'vitrine');
+        Setting::set('editorial_link_text', $this->editorialLinkText, 'vitrine');
+
+        $this->successMessage = 'Section éditoriale mise à jour.';
     }
 
     public function updatedHeroImageUrl(): void
@@ -518,6 +557,72 @@ new #[Title('Vitrine')] #[Layout('layouts.app')] class extends Component
                     </flux:button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    {{-- Section Éditoriale --}}
+    <div class="bg-white dark:bg-zinc-900/50 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-sm p-10 space-y-8">
+        <div class="flex items-center gap-3">
+            <div class="size-10 bg-zinc-50 dark:bg-zinc-800 rounded-2xl flex items-center justify-center">
+                <flux:icon.squares-2x2 class="size-5 text-zinc-400" />
+            </div>
+            <div>
+                <h3 class="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-[0.2em]">Section Éditoriale</h3>
+                <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Les deux images + texte sous les nouveautés</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {{-- Image gauche --}}
+            <div class="space-y-3">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Grande image (gauche)</label>
+                @php $editorialLeftUrl = Setting::resolveMediaUrl($editorialImageLeft) ?? asset('mams-template/assets/images/prod.png'); @endphp
+                <div class="relative group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 h-52 bg-zinc-50 dark:bg-zinc-900">
+                    <img src="{{ $editorialLeftUrl }}" alt="Image gauche" class="size-full object-cover">
+                    <div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-3">
+                        <flux:button type="button" wire:click="openMediaPicker('editorial_left')" size="sm" variant="filled" class="!bg-white !text-zinc-900 !font-black uppercase tracking-widest text-[10px]">Changer</flux:button>
+                        <flux:button type="button" wire:click="clearImage('editorial_left')" size="sm" variant="danger" class="!bg-rose-500 !font-black uppercase tracking-widest text-[10px]">Retirer</flux:button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Image droite --}}
+            <div class="space-y-3">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Petite image (droite)</label>
+                @php $editorialRightUrl = Setting::resolveMediaUrl($editorialImageRight) ?? asset('mams-template/assets/images/pr.png'); @endphp
+                <div class="relative group rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 h-52 bg-zinc-50 dark:bg-zinc-900">
+                    <img src="{{ $editorialRightUrl }}" alt="Image droite" class="size-full object-cover">
+                    <div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-3">
+                        <flux:button type="button" wire:click="openMediaPicker('editorial_right')" size="sm" variant="filled" class="!bg-white !text-zinc-900 !font-black uppercase tracking-widest text-[10px]">Changer</flux:button>
+                        <flux:button type="button" wire:click="clearImage('editorial_right')" size="sm" variant="danger" class="!bg-rose-500 !font-black uppercase tracking-widest text-[10px]">Retirer</flux:button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Badge</label>
+                <flux:input wire:model.blur="editorialBadge" variant="filled" placeholder="Ex: Collections" class="!bg-zinc-50 dark:!bg-zinc-800 !h-12 font-bold" />
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Texte du lien</label>
+                <flux:input wire:model.blur="editorialLinkText" variant="filled" placeholder="Ex: Explorer la boutique" class="!bg-zinc-50 dark:!bg-zinc-800 !h-12 font-bold" />
+            </div>
+            <div class="md:col-span-2 space-y-2">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Titre</label>
+                <flux:input wire:model.blur="editorialTitle" variant="filled" placeholder="Ex: Nos produits, votre beauté" class="!bg-zinc-50 dark:!bg-zinc-800 !h-12 font-bold" />
+            </div>
+            <div class="md:col-span-2 space-y-2">
+                <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Description</label>
+                <flux:textarea wire:model.blur="editorialText" variant="filled" rows="3" placeholder="Description de cette section..." class="!bg-zinc-50 dark:!bg-zinc-800 font-bold" />
+            </div>
+        </div>
+
+        <div class="pt-2">
+            <flux:button wire:click="saveEditorial" variant="primary" class="!bg-brand-primary border-none font-black uppercase tracking-widest text-[10px] py-4 px-10 rounded-2xl shadow-lg shadow-brand-primary/20">
+                Sauvegarder
+            </flux:button>
         </div>
     </div>
 

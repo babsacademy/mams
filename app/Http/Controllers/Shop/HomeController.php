@@ -59,6 +59,13 @@ class HomeController extends Controller
         $heroCta2Text = Setting::get('hero_cta2_text', 'Pourquoi nous');
         $instagramUrl = Setting::get('instagram_url', '#');
 
+        $editorialImageLeft = Setting::resolveMediaUrl(Setting::get('editorial_image_left', '')) ?? asset('mams-template/assets/images/prod.png');
+        $editorialImageRight = Setting::resolveMediaUrl(Setting::get('editorial_image_right', '')) ?? asset('mams-template/assets/images/pr.png');
+        $editorialBadge = Setting::get('editorial_badge', 'Collections');
+        $editorialTitle = Setting::get('editorial_title', 'Nos produits, votre beauté');
+        $editorialText = Setting::get('editorial_text', 'Découvrez notre sélection premium de cheveux, perruques et accessoires beauté pensée pour sublimer chaque style.');
+        $editorialLinkText = Setting::get('editorial_link_text', 'Explorer la boutique');
+
         return view('shop.home', [
             'categories' => $categories,
             'featuredProducts' => $featuredProducts,
@@ -74,6 +81,12 @@ class HomeController extends Controller
             'heroCta1Text' => $heroCta1Text,
             'heroCta2Text' => $heroCta2Text,
             'instagramUrl' => $instagramUrl,
+            'editorialImageLeft' => $editorialImageLeft,
+            'editorialImageRight' => $editorialImageRight,
+            'editorialBadge' => $editorialBadge,
+            'editorialTitle' => $editorialTitle,
+            'editorialText' => $editorialText,
+            'editorialLinkText' => $editorialLinkText,
         ]);
     }
 }
